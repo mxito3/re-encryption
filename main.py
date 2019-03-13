@@ -28,8 +28,8 @@ cleartext = pre.decrypt(ciphertext=ciphertext,
 kfrags = pre.generate_kfrags(delegating_privkey=alices_private_key,
                              signer=alices_signer,
                              receiving_pubkey=bobs_public_key,
-                             threshold=10,
-                             N=20)
+                             threshold=1,
+                             N=1)
 
 #代理重加密．bob确认收到的cfrags数量，大于10Bob便可以解密密文
 capsule.set_correctness_keys(delegating=alices_public_key,
@@ -37,13 +37,14 @@ capsule.set_correctness_keys(delegating=alices_public_key,
                              verifying=alices_verifying_key)
 
 cfrags = list()           # Bob's cfrag collection
-for kfrag in kfrags[:10]:
-  cfrag = pre.reencrypt(kfrag=kfrag, capsule=capsule)
-  cfrags.append(cfrag)    # Bob collects a cfrag
+for kfrag in kfrags[:1]:
+  # kfrag是密钥吗？
+  cfrag = pre.reencrypt(kfrag=kfrag, capsule=capsule)##代理进行重加密
+  cfrags.append(cfrag)    # Bob收集重加密后的东西－－cfrag
 
 
 # Bob解密密文
-for cfrag in cfrags:
+for cfrag in cfrags:   #用收集到的东西解密
   capsule.attach_cfrag(cfrag)
 
 bob_cleartext = pre.decrypt(ciphertext=ciphertext,
