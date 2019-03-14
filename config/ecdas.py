@@ -37,13 +37,11 @@ def is_valid(vk_string, message, signature):
         return False
 
 
-message = "I am a transaction !"
-vk, sk = generate_key()  # 产生公钥和私钥
-vk_string = vk.to_string()
-sig = make_transaction(sk, message)  # 模拟交易签名
-print(type(sig))  # 仅仅是为了验证下数据格式
+# message = "I am a transaction !"
 
-if is_valid(vk_string, message, sig):
-    print("True")
-else:
-    print("False")
+# print(type(sig))  # 仅仅是为了验证下数据格式
+
+# if is_valid(vk_string, message, sig):
+#     print("True")
+# else:
+#     print("False")
