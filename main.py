@@ -1,55 +1,36 @@
-from umbral import pre, keys, signing
+from umbral import pre, keys, signing,config
+from config.doctor import Doctor
+from umbral.curve import SECP256K1
+from config import ecdas,util,common
+from config.owner import Owner
+import sys,json
+if __name__ == "__main__":
 
-# 为Alice生成密钥对
-alices_private_key = keys.UmbralPrivateKey.gen_key()
-alices_public_key = alices_private_key.get_pubkey()
+  #设置默认的加密算法
+  config.set_default_curve(SECP256K1)
 
-alices_signing_key = keys.UmbralPrivateKey.gen_key()
-alices_verifying_key = alices_signing_key.get_pubkey()
-alices_signer = signing.Signer(private_key=alices_signing_key)
+  #新建一个doctor对象，一个owner对象
+  docter = Doctor()
+  owner=Owner()
 
-# 为Bob生成密钥对
-bobs_private_key = keys.UmbralPrivateKey.gen_key()
-bobs_public_key = bobs_private_key.get_pubkey()
+  #patient重加密密钥公钥
+  paint_public_key = owner.recrypt_public_key
 
-
-
-# 用alices的私钥加密明文
-plaintext = b'Hello! my nama is Yapie!' #明文，，换成你的病例就行了
-ciphertext, capsule = pre.encrypt(alices_public_key, plaintext)
-
-# 尝试用alice的私钥是否能够解密.
-cleartext = pre.decrypt(ciphertext=ciphertext,
-                        capsule=capsule,
-                        decrypting_key=alices_private_key)
-
-# Alice 生成　"M of N"　的解密条件，意思是bob能收到20个代理中的十个以上的重加密就可以解密密文
-# In this example, 10 out of 20.
-kfrags = pre.generate_kfrags(delegating_privkey=alices_private_key,
-                             signer=alices_signer,
-                             receiving_pubkey=bobs_public_key,
-                             threshold=10,
-                             N=20)
-
-#代理重加密．bob确认收到的cfrags数量，大于10Bob便可以解密密文
-capsule.set_correctness_keys(delegating=alices_public_key,
-                             receiving=bobs_public_key,
-                             verifying=alices_verifying_key)
-
-cfrags = list()           # Bob's cfrag collection
-for kfrag in kfrags[:10]:
-  cfrag = pre.reencrypt(kfrag=kfrag, capsule=capsule)
-  cfrags.append(cfrag)    # Bob collects a cfrag
+  #第一步,医生加密数据并传输给病人
+  ciphertext,capsule = docter.pretreatment(paint_public_key)
 
 
-# Bob解密密文
-for cfrag in cfrags:
-  capsule.attach_cfrag(cfrag)
+  #第二步，owner确认信息是否正确
+  cipher=owner.confirmMessage(ciphertext,capsule)
+  if not cipher:
+    sys.exit(0)        #owner认为信息不对则通不过
 
-bob_cleartext = pre.decrypt(ciphertext=ciphertext,
-                            capsule=capsule,
-                            decrypting_key=bobs_private_key)
-
-
-print("Bob解密出的密文是%s"%bob_cleartext)
-assert bob_cleartext == plaintext
+  #第三步，医生确认签名
+  sign , clear_text = common.deserialization(cipher) #对owner发过来的东西反序列化　　
+  
+  #doctor验证owner签名
+  doctor_treat_result = docter.treat_owner_response(sign,clear_text)
+  if doctor_treat_result:
+    print("病例验证成功")
+  else:
+    print("病例验证失败")
