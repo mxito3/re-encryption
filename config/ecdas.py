@@ -36,12 +36,3 @@ def is_valid(vk_string, message, signature):
     except:
         return False
 
-
-# message = "I am a transaction !"
-
-# print(type(sig))  # 仅仅是为了验证下数据格式
-
-# if is_valid(vk_string, message, sig):
-#     print("True")
-# else:
-#     print("False")

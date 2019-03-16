@@ -1,41 +1,42 @@
 from umbral import pre, keys, signing
 import json
 import time
-from . import ecdas
+from . import ecdas,common,util
 class Doctor(object):
     '''
-        pkd：doctor的公钥
-        patient_public_key:病人的公钥
-        doctor_sign_key: doctor用来ecdas签名的私钥
+        verify_key：ecads验证的公钥 
+        __sign_key: doctor用来ecdas签名的私钥
     '''
-    def pretreatment(self,patient_public_key,pkd,doctor_sign_key):
-        #消息准备
-        message={}
-        message["name"]='someone'
-        message['symptom'] = 'headache'
-        #dic to json
-        messageJson = json.dumps(message)
-        #json to str
-        messageInBytes=str.encode(messageJson)
-        #ciphertest => c0
+    def __init__(self):#构造函数
+        self.verify_key, self.__sign_key =ecdas.generate_key() 
+  
+    def get_signKey(self):
+        return self.__sign_key
+
+    def pretreatment(self,patient_public_key):
+        #获取病例
+        messageJson=common.getMessage() #读取病例
+        messageInBytes=str.encode(messageJson) #转成bytes形式
+        #重加密
         c0, capsule = pre.encrypt(patient_public_key,messageInBytes)
-        c0_string = "".join(map(chr, c0))
-        timestamp = str(int(time.time()))
-        ciphertext={}
-        #bytes to str
-        ciphertext['c0'] =c0_string
-        ciphertext['doctor_public_key'] = pkd
-        ciphertext['timestamp'] = timestamp  
-        cipher_checker=json.dumps(ciphertext)
-        cipherHash = hash(cipher_checker)
+        #级联
+        ciphertext=common.combine(c0,self.verify_key.to_string())
+        #对级联结果获得签名
+        sign=common.sign(ciphertext,self.__sign_key)
+        #发送给owner之前先序列化
+        cipher=common.serialization(sign,ciphertext)
+        
+        return cipher,capsule
 
-        #获得签名
-        sign= ecdas.make_transaction(doctor_sign_key,cipherHash)
-        cipher={}
-        cipher['cipher'] = c0_string
-        cipher['sign'] =  sign
-        cipher['cipherHash'] = cipherHash
-        cipher['cipher_checker'] = cipher_checker
-        return cipher
+    def treat_owner_response(self,sign,ciphertext):
 
+        #获得密文
+        cipher = util.stringToList(ciphertext)
+        #获得owner的acads公钥
+        verify_key = cipher['verify_key']
+        #验证签名
+        if common.checkSignValid(verify_key,ciphertext,sign):
+            return True
+        else:
+            return False
 
