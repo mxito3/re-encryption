@@ -21,8 +21,10 @@ class Doctor(object):
         c0, capsule = pre.encrypt(patient_public_key,messageInBytes)
         #级联
         ciphertext=common.combine(c0,self.verify_key.to_string())
-        #对级联结果获得签名
-        sign=common.sign(ciphertext,self.__sign_key)
+        #求hash值
+        cipher_hash = hash(ciphertext)
+        #对hash值结果获得签名
+        sign=common.sign(cipher_hash,self.__sign_key)
         #发送给owner之前先序列化
         cipher=common.serialization(sign,ciphertext)
         
@@ -32,10 +34,12 @@ class Doctor(object):
 
         #获得密文
         cipher = util.stringToList(ciphertext)
+        #求hash
+        cipher_hash = hash(str(ciphertext))
         #获得owner的acads公钥
         verify_key = cipher['verify_key']
         #验证签名
-        if common.checkSignValid(verify_key,ciphertext,sign):
+        if common.checkSignValid(verify_key,cipher_hash,sign):
             return True
         else:
             return False

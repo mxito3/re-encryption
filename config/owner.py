@@ -35,7 +35,8 @@ class Owner(object):
         #获得doctor的ecads公钥
         doctor_verify_key= cipher['verify_key']
         #验证doctor签名
-        verifyResult=common.checkSignValid(doctor_verify_key,cipher,sign)
+        cipher_hash = hash(str(cipher))
+        verifyResult=common.checkSignValid(doctor_verify_key,cipher_hash,sign)
         if not verifyResult:
             print("医生签名验证失败")
             return None
@@ -56,8 +57,10 @@ class Owner(object):
         #级联
         c1=common.combine(ciphertext,self.verify_key.to_string())
         
+        #求hash
+        cipher_hash = hash(str(c1))
         #签名
-        sign=common.sign(c1,self.__sign_key)
+        sign=common.sign(cipher_hash,self.__sign_key)
         
         return common.serialization(sign,c1)
 
