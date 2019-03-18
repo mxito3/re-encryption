@@ -1,7 +1,8 @@
 from umbral import pre, keys, signing
 import json
 import time
-from . import ecdas,common,util
+from . import ecdas,common
+from util import type_convert
 class Doctor(object):
     '''
         verify_key：ecads验证的公钥 
@@ -33,7 +34,7 @@ class Doctor(object):
     def treat_owner_response(self,sign,ciphertext):
 
         #获得密文
-        cipher = util.stringToList(ciphertext)
+        cipher = type_convert.stringToList(ciphertext)
         #求hash
         cipher_hash = hash(str(ciphertext))
         #获得owner的acads公钥

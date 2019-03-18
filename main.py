@@ -1,8 +1,9 @@
 from umbral import pre, keys, signing,config
 from config.doctor import Doctor
 from umbral.curve import SECP256K1
-from config import ecdas,util,common
+from config import ecdas,common
 from config.owner import Owner
+from util import type_convert
 import sys,json
 if __name__ == "__main__":
 

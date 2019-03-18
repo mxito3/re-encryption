@@ -1,5 +1,6 @@
-from . import ecdas,common,util
+from . import ecdas,common
 from umbral import pre, keys, signing,config
+from util import type_convert
 class Owner(object):
     '''
         verify_key：ecads验证的公钥 
@@ -21,7 +22,7 @@ class Owner(object):
         cleartext = pre.decrypt(ciphertext=ciphertext,
                         capsule=capsule,
                         decrypting_key=self.__recrypt_private_key)
-        if(util.bytesTostring(cleartext) == self.message):
+        if(type_convert.bytesTostring(cleartext) == self.message):
             return True
         else:
             return False
@@ -31,7 +32,7 @@ class Owner(object):
         #获得签名
         sign=ciphertext.get('sign')
         #获得密文
-        cipher= util.stringToList(ciphertext['cipher'])
+        cipher= type_convert.stringToList(ciphertext['cipher'])
         #获得doctor的ecads公钥
         doctor_verify_key= cipher['verify_key']
         #验证doctor签名
