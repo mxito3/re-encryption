@@ -1,5 +1,6 @@
+import ecdsa
 from ecdsa import SigningKey, NIST384p, VerifyingKey
-
+import hashlib
 def generate_key():
     """
     产生公钥和私钥
@@ -17,7 +18,7 @@ def make_transaction(sk, message):
     :param message: 消息
     :return: 签名
     """
-    signature = sk.sign(str(message).encode("utf8"))  # 统一编码格式
+    signature = sk.sign(str(message).encode("utf8"),hashfunc=hashlib.sha256)  # 统一编码格式
     return signature
 
 
@@ -31,7 +32,7 @@ def is_valid(vk_string, message, signature):
     """
     vk = VerifyingKey.from_string(vk_string, NIST384p)
     try:
-        vk.verify(signature, str(message).encode("utf8"))  # 统一编码格式
+        vk.verify(signature, str(message).encode("utf8"),hashfunc=hashlib.sha256)  # 统一编码格式
         return True
     except:
         return False
