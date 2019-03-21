@@ -1,6 +1,7 @@
 import json
 from . import ecdas
 import time,os
+from collections import OrderedDict
 def checkHash(message,message_hash):
     if hash(message) == message_hash:
         return True
@@ -57,3 +58,26 @@ def checkSignValid(verify_key,message,sig):
         return True
     else:
         return False
+
+def serializationDrawData(keys,values):
+    print("in {} {}".format(keys,values))
+    temp_result={}
+    for index in range(len(keys)):
+        key = keys[index]
+        temp_result[key] = values[index]
+    result = OrderedDict(sorted(temp_result.items()))
+    # for index in result.items():
+    #     print(result.items[index])
+    # print(result.keys)
+    x=[]
+    y= []
+    for key in result.keys():
+        x.append(key)
+    for index in range(len(result.values())):
+        valu=result.get(x[index])
+        y.append(valu)
+    
+  
+    # print("{}   {}".format(x,y))
+    
+    return x,y

@@ -7,6 +7,8 @@ from config.owner import Owner
 from util import type_convert
 import sys,json,time
 import matplotlib.pyplot as plt
+
+from matplotlib.font_manager import  *
 need_test_file = 10
 #认证时间和数据大小的关系
 def verifyTime_dataSize():
@@ -79,21 +81,31 @@ def verify(owner_id):
 
 def drawMap(datasize,timeUsed):
   print(datasize)
-  plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签 
+
+  myfont = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc')
   plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
-  x=datasize
-  stage1Time=timeUsed[0]
+  
+  stage1Time=timeUsed[0] 
   stage2Time=timeUsed[1]
   stage3Time=timeUsed[2]
-  print("{} {} {}".format(stage1Time,stage2Time,stage3Time))
-  plt.plot(x,stage1Time,color='red',label='医生构造密文')
-  plt.plot(x,stage2Time,color='blue',label='病例拥有者认证医生')
-  plt.plot(x,stage3Time,color='green',label='医生认证病例拥有者')
-  plt.title(u'病例处理与病例大小的关系')
-  plt.xlabel(u'病例大小(字节)')
-  plt.ylabel(u'加密需要的时间')
+  stage1_x,stage1_y=common.serializationDrawData(datasize,stage1Time)
+  print("x{}\n y{}".format(stage1_x,stage1_y))
+  stage2_x,stage2_y=common.serializationDrawData(datasize,stage2Time)
+  print("x{}\n y{}".format(stage2_x,stage2_y))
+  stage3_x,stage3_y=common.serializationDrawData(datasize,stage3Time)
+  print("x{}\n y{}".format(stage3_x,stage3_y))
+  
+  
+  
+  plt.plot(stage1_x,stage1_y,color='red',label='stage 1')
+  plt.plot(stage2_x,stage2_y,color='blue',label='stage 2')
+  plt.plot(stage3_x,stage3_y,color='green',label='stage 3')
+  plt.title(u'病例处理时间与病例大小的关系',fontproperties=myfont)
+  plt.xlabel(u'病例大小(字节)',fontproperties=myfont)
+  plt.ylabel(u'加密需要的时间',fontproperties=myfont)
   plt.legend()
   plt.show()
+
 if __name__ == "__main__":
     result= verifyTime_dataSize()
   
