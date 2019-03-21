@@ -4,14 +4,14 @@ from umbral.curve import SECP256K1
 from config import ecdas,common
 from config.owner import Owner
 from util import type_convert
-import sys,json
-import time
-if __name__ == "__main__":
+import sys,json,time
 
-  #设置默认的加密算法
-  stage_one_start_time = time.time()
+
+#认证时间和数据大小的关系
+def verifyTime_dataSize():
+  result=[]
+  stage1_start_time = time.time()
   config.set_default_curve(SECP256K1)
-
   #新建一个doctor对象，一个owner对象
   docter = Doctor()
   owner=Owner()
@@ -20,8 +20,7 @@ if __name__ == "__main__":
   paint_public_key = owner.recrypt_public_key
 
   #第一步,医生加密数据并传输给病人
-  data_index = 1
-  ciphertext,capsule,stage1_finish_time = docter.pretreatment(paint_public_key,data_index)
+  ciphertext,capsule,stage1_finish_time = docter.pretreatment(paint_public_key)
 
 
   #第二步，owner确认信息是否正确
@@ -38,3 +37,16 @@ if __name__ == "__main__":
     print("病例验证成功")
   else:
     print("病例验证失败")
+  time_stage1 = stage1_finish_time - stage1_start_time
+  time_stage2 = stage2_finish_time - stage1_finish_time
+  time_stage3 = stage3_finish_time - stage2_finish_time
+  result.append(time_stage1)
+  result.append(time_stage2)
+  result.append(time_stage3)
+  return result
+if __name__ == "__main__":
+    result= verifyTime_dataSize()
+    print(result)
+
+
+  

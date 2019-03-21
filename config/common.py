@@ -1,22 +1,25 @@
 import json
 from . import ecdas
-import time
+import time,os
 def checkHash(message,message_hash):
     if hash(message) == message_hash:
         return True
     else:
         return False
 
-def getMessage():
+def getMessage(dataIndx):
     #消息准备
-    message={}
-    message["name"]='someone'
-    message['symptom'] = 'headache'
-    #dic to json
-    messageJson = json.dumps(message)
-    #json to str
-    return messageJson
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    filename = os.path.join(my_path,"../data/patient"+str(dataIndx))
+    buffer = open(filename,'r').read()
+    return buffer
+def getDataSize(dataIndex):
+    my_path = os.path.abspath(os.path.dirname(__file__))
+    filename = os.path.join(my_path,"../data/patient"+str(dataIndex))
+    size = os.path.getsize(filename)
+    return size
 
+    
 
 #级联
 def combine(cipher,verifyKey):

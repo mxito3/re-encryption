@@ -1,2 +1,3 @@
 venv/
 *.pyc
+fabric-sdk-py/

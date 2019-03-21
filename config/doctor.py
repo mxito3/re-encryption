@@ -14,9 +14,9 @@ class Doctor(object):
     def get_signKey(self):
         return self.__sign_key
 
-    def pretreatment(self,patient_public_key):
+    def pretreatment(self,patient_public_key,data_index):
         #获取病例
-        messageJson=common.getMessage() #读取病例
+        messageJson=common.getMessage(data_index) #读取病例
         messageInBytes=str.encode(messageJson) #转成bytes形式
         #重加密
         c0, capsule = pre.encrypt(patient_public_key,messageInBytes)
@@ -29,7 +29,8 @@ class Doctor(object):
         #发送给owner之前先序列化
         cipher=common.serialization(sign,ciphertext)
         
-        return cipher,capsule
+        finishtime = time.time()
+        return cipher,capsule,finishtime
 
     def treat_owner_response(self,sign,ciphertext):
 
@@ -41,7 +42,9 @@ class Doctor(object):
         verify_key = cipher['verify_key']
         #验证签名
         if common.checkSignValid(verify_key,cipher_hash,sign):
-            return True
+            finishtime = time.time()
+            return True,finishtime
         else:
-            return False
+            finishtime = time.time()
+            return False,finishtime
 

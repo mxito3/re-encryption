@@ -1,6 +1,7 @@
 from . import ecdas,common
 from umbral import pre, keys, signing,config
 from util import type_convert
+import time
 class Owner(object):
     '''
         verify_key：ecads验证的公钥 
@@ -9,10 +10,11 @@ class Owner(object):
         __recrypt_private_key：重加密私钥
         recrypt_public_key：重加密公钥
     '''
-    def __init__(self):
+    def __init__(self,id):
         self.__recrypt_private_key = keys.UmbralPrivateKey.gen_key()
         self.recrypt_public_key = self.__recrypt_private_key.get_pubkey()
-        self.message = common.getMessage()
+        self.id = id
+        self.message = common.getMessage(id)
         self.verify_key, self.__sign_key =ecdas.generate_key() 
   
     def get_signKey(self):
@@ -62,6 +64,6 @@ class Owner(object):
         cipher_hash = hash(str(c1))
         #签名
         sign=common.sign(cipher_hash,self.__sign_key)
-        
-        return common.serialization(sign,c1)
+        finishtime = time.time()
+        return common.serialization(sign,c1),finishtime
 
