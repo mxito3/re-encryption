@@ -10,7 +10,11 @@ class Doctor(object):
     '''
     def __init__(self):#构造函数
         self.verify_key, self.__sign_key =ecdas.generate_key() 
-  
+        self.__recrypt_private_key = keys.UmbralPrivateKey.gen_key()
+        self.recrypt_public_key = self.__recrypt_private_key.get_pubkey()
+    def get_recrpto_private_Key(self):
+        return self.__recrypt_private_key
+
     def get_signKey(self):
         return self.__sign_key
 

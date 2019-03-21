@@ -14,11 +14,14 @@ class Owner(object):
         self.__recrypt_private_key = keys.UmbralPrivateKey.gen_key()
         self.recrypt_public_key = self.__recrypt_private_key.get_pubkey()
         self.id = id
-        self.message = common.getMessage(id)
+        self.message = type_convert.stringToBytes(common.getMessage(id))
         self.verify_key, self.__sign_key =ecdas.generate_key() 
   
     def get_signKey(self):
         return self.__sign_key
+
+    def get_recrpto_private_Key(self):
+        return self.__recrypt_private_key
 
     def checkMessage(self,ciphertext,capsule):
         cleartext = pre.decrypt(ciphertext=ciphertext,
