@@ -38,7 +38,6 @@ class RecryptoUtil(object):
         for cfrag in cfrags:   #用收集到的东西解密
             capsule.attach_cfrag(cfrag)
         cleartext = pre.decrypt(ciphertext=ciphertext, capsule=capsule,decrypting_key=patient_private_key)
-        print(cleartext)
         if(cleartext == clear_text):
             return True
         else:

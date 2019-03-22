@@ -2,6 +2,7 @@ from . import ecdas,common
 from umbral import pre, keys, signing,config
 from util import type_convert
 import time
+from crypto.keys import Key
 class Owner(object):
     '''
         verify_key：ecads验证的公钥 
@@ -11,23 +12,14 @@ class Owner(object):
         recrypt_public_key：重加密公钥
     '''
     def __init__(self,id):
-        self.__recrypt_private_key = keys.UmbralPrivateKey.gen_key()
-        self.recrypt_public_key = self.__recrypt_private_key.get_pubkey()
-        self.id = id
+        self.keys = Key()
         self.message = type_convert.stringToBytes(common.getMessage(id))
-        self.verify_key, self.__sign_key =ecdas.generate_key() 
-  
-    def get_signKey(self):
-        return self.__sign_key
-
-    def get_recrpto_private_Key(self):
-        return self.__recrypt_private_key
 
     def checkMessage(self,ciphertext,capsule):
         cleartext = pre.decrypt(ciphertext=ciphertext,
                         capsule=capsule,
-                        decrypting_key=self.__recrypt_private_key)
-        if(type_convert.bytesTostring(cleartext) == self.message):
+                        decrypting_key=self.keys.get_recrpto_private_Key())
+        if(cleartext == self.message):
             return True
         else:
             return False
@@ -61,12 +53,12 @@ class Owner(object):
         #准备回复doctor
 
         #级联
-        c1=common.combine(ciphertext,self.verify_key.to_string())
+        c1=common.combine(ciphertext,self.keys.verify_key.to_string())
         
         #求hash
         cipher_hash = hash(str(c1))
         #签名
-        sign=common.sign(cipher_hash,self.__sign_key)
+        sign=common.sign(cipher_hash,self.keys.get_signKey())
         finishtime = time.time()
         return common.serialization(sign,c1),finishtime
 

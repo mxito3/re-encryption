@@ -16,6 +16,7 @@ def init():
 
 #认证时间和数据大小的关系
 def verifyTime_dataSize():
+  dataSize =common_operate.getDataSize()
   result=[]
   stage1Time=[]
   stage2Time=[]
@@ -41,9 +42,11 @@ def verify(owner_id):
   docter = Doctor()
   owner=Owner(owner_id)
   #patient重加密密钥公钥
-  paint_public_key = owner.recrypt_public_key
+  paint_public_key = owner.keys.recrypt_public_key
   #第一步,医生加密数据并传输给病人
-  ciphertext,capsule,stage1_finish_time = docter.pretreatment(paint_public_key,owner_id)
+  #获得病人data
+  data=owner.message #读取病例
+  ciphertext,capsule,stage1_finish_time = docter.pretreatment(paint_public_key,data)
   #第二步，owner确认信息是否正确
   cipher,stage2_finish_time=owner.confirmMessage(ciphertext,capsule)
   if not cipher:
@@ -84,10 +87,6 @@ def drawMap(datasize,timeUsed):
   plt.legend()
   plt.show()
 
-if __name__ == "__main__":
-  init()
-  dataSize =common_operate.getDataSize()
-  result= verifyTime_dataSize()
   
 
 

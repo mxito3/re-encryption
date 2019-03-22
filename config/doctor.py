@@ -3,33 +3,21 @@ import json
 import time
 from . import ecdas,common
 from util import type_convert
+from crypto.keys import Key
 class Doctor(object):
-    '''
-        verify_key：ecads验证的公钥 
-        __sign_key: doctor用来ecdas签名的私钥
-    '''
     def __init__(self):#构造函数
-        self.verify_key, self.__sign_key =ecdas.generate_key() 
-        self.__recrypt_private_key = keys.UmbralPrivateKey.gen_key()
-        self.recrypt_public_key = self.__recrypt_private_key.get_pubkey()
-    def get_recrpto_private_Key(self):
-        return self.__recrypt_private_key
-
-    def get_signKey(self):
-        return self.__sign_key
-
-    def pretreatment(self,patient_public_key,data_index):
+        self.keys = Key()
+    def pretreatment(self,patient_public_key,data):
         #获取病例
-        messageJson=common.getMessage(data_index) #读取病例
-        messageInBytes=str.encode(messageJson) #转成bytes形式
+        # messageInBytes=str.encode(data) #转成bytes形式
         #重加密
-        c0, capsule = pre.encrypt(patient_public_key,messageInBytes)
+        c0, capsule = pre.encrypt(patient_public_key,data)
         #级联
-        ciphertext=common.combine(c0,self.verify_key.to_string())
+        ciphertext=common.combine(c0,self.keys.verify_key.to_string())
         #求hash值
         cipher_hash = hash(ciphertext)
         #对hash值结果获得签名
-        sign=common.sign(cipher_hash,self.__sign_key)
+        sign=common.sign(cipher_hash,self.keys.get_signKey())
         #发送给owner之前先序列化
         cipher=common.serialization(sign,ciphertext)
         
