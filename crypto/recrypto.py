@@ -8,7 +8,7 @@ class RecryptoUtil(object):
         crypto_start_time = time.time()
         ciphertext, capsule = pre.encrypt(doctor_public_key, clear_text)
         crypto_end_time = time.time()
-        timeUsed = crypto_end_time - crypto_start_time
+        timeUsed = type_convert.double_process(crypto_end_time - crypto_start_time)
         return ciphertext,capsule,timeUsed
         
     def approve(self,doctor_private_key,doctor_signer,patient_public_key):
@@ -20,10 +20,11 @@ class RecryptoUtil(object):
                              threshold=1,
                              N=1)
         approve_end_time = time.time()
-        timeUsed = approve_end_time - approve_start_time
+        timeUsed = type_convert.double_process(approve_end_time - approve_start_time)
         return kfrags,timeUsed
 
     def re_encrypto(self,capsule,kfrags,doctor_public_key,patient_public_key,doctor_verify_key):
+        start_time = time.time()
         capsule.set_correctness_keys(
             delegating=doctor_public_key,
             receiving=patient_public_key,
@@ -32,14 +33,19 @@ class RecryptoUtil(object):
         for kfrag in kfrags[:1]:
             cfrag = pre.reencrypt(kfrag=kfrag, capsule=capsule)##代理进行重加密
             cfrags.append(cfrag)    # Bob收集重加密后的东西－－cfrag
-        return cfrags
+        end_time = time.time()
+        time_used = type_convert.double_process(end_time-start_time)
+        return cfrags,time_used
 
     def decrypt(self,cfrags,capsule,clear_text,ciphertext,patient_private_key):
+        start_time = time.time()
         for cfrag in cfrags:   #用收集到的东西解密
             capsule.attach_cfrag(cfrag)
         cleartext = pre.decrypt(ciphertext=ciphertext, capsule=capsule,decrypting_key=patient_private_key)
+        end_time = time.time()
+        time_used = type_convert.double_process(end_time-start_time)
         if(cleartext == clear_text):
-            return True
+            return True,time_used
         else:
-            return False
+            return False,time_used
 

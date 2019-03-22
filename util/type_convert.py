@@ -12,3 +12,8 @@ def stringToBytes(rawString:str):
 
 def stringToList(rawString:str):
     return ast.literal_eval(rawString)
+
+def double_process(rawDouble):
+    digits=3
+    return round(rawDouble,digits)
+    
