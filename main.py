@@ -3,7 +3,7 @@ from config.doctor import Doctor
 from umbral.curve import SECP256K1
 from config import ecdas,common
 from config.owner import Owner
-from util import type_convert
+from utils import type_convert
 import sys,json
 import time
 if __name__ == "__main__":

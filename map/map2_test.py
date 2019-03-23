@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/home/yapie/github/re-encryption/')
 import map2,common_operate
 if __name__ == "__main__":
   common_operate.init()

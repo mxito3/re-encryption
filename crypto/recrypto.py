@@ -1,12 +1,14 @@
 # 关于重加密的操作
 import time,os,sys
-from umbral import pre, keys, signing
 sys.path.append('/home/yapie/github/re-encryption/')
 from utils import type_convert
+from umbral import pre, keys, signing
+
 class RecryptoUtil(object):
     def encrypto(self,clear_text,doctor_public_key):
         crypto_start_time = time.time()
         ciphertext, capsule = pre.encrypt(doctor_public_key, clear_text)
+        print('{}   {}'.format(sys.getsizeof(ciphertext),sys.getsizeof(capsule)))
         crypto_end_time = time.time()
         timeUsed = type_convert.double_process(crypto_end_time - crypto_start_time)
         return ciphertext,capsule,timeUsed
