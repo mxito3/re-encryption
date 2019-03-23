@@ -1,18 +1,17 @@
 #coding:utf-8
 from umbral import pre, keys, signing,config
 import common_operate ,json,time
-from config.doctor import Doctor
-from umbral.curve import SECP256K1
-from config import ecdas,common
-from config.owner import Owner
-from util import type_convert
+from user.doctor import Doctor
+from crypto import ecdas
+from config import common
+from user.owner import Owner
+from utils import type_convert
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import  *
 
 #加密时间和数据大小的关系
 
-def init():
-  config.set_default_curve(SECP256K1)
+
 
 #认证时间和数据大小的关系
 def verifyTime_dataSize():
@@ -60,9 +59,9 @@ def verify(owner_id):
   else:
     print("patient{}病例验证失败".format(str(owner_id)))
   digits=3
-  time_stage1 = round(stage1_finish_time - stage1_start_time,digits)
-  time_stage2 = round(stage2_finish_time - stage1_finish_time,digits)
-  time_stage3 = round(stage3_finish_time - stage2_finish_time,digits)
+  time_stage1 = type_convert.double_process(stage1_finish_time - stage1_start_time)
+  time_stage2 = type_convert.double_process(stage2_finish_time - stage1_finish_time)
+  time_stage3 = type_convert.double_process(stage3_finish_time - stage2_finish_time)
   result.append(time_stage1)
   result.append(time_stage2)
   result.append(time_stage3)

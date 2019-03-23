@@ -1,8 +1,9 @@
 from umbral import pre, keys, signing
 import json
 import time
-from . import ecdas,common
-from util import type_convert
+from crypto import ecdas
+from config import common
+from utils import type_convert
 from crypto.keys import Key
 class Doctor(object):
     def __init__(self):#构造函数

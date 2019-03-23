@@ -1,4 +1,5 @@
-from config import ecdas,common
+from . import ecdas
+from config import common
 from umbral import pre, keys, signing
 class Key(object):
     def __init__(self):#构造函数

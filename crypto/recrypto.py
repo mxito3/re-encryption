@@ -2,7 +2,7 @@
 import time,os,sys
 from umbral import pre, keys, signing
 sys.path.append('/home/yapie/github/re-encryption/')
-from util import type_convert
+from utils import type_convert
 class RecryptoUtil(object):
     def encrypto(self,clear_text,doctor_public_key):
         crypto_start_time = time.time()

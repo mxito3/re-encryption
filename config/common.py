@@ -1,5 +1,5 @@
 import json
-from . import ecdas
+from crypto import ecdas
 import time,os
 from collections import OrderedDict
 def checkHash(message,message_hash):

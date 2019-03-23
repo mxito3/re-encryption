@@ -1,6 +1,7 @@
-from . import ecdas,common
+from crypto import ecdas
+from config import common
 from umbral import pre, keys, signing,config
-from util import type_convert
+from utils import type_convert
 import time
 from crypto.keys import Key
 class Owner(object):

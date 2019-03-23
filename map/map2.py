@@ -3,22 +3,23 @@ import common_operate
 import json
 import time
 from crypto.recrypto import RecryptoUtil
-from config.doctor import Doctor
+from user.doctor import Doctor
 from umbral.curve import SECP256K1
-from config import ecdas, common
-from config.owner import Owner
+from crypto import ecdas
+from config import common
+from user.owner import Owner
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import *
-from util import type_convert
+from utils import type_convert
 import threading
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
-yminorLocator   = MultipleLocator(0.01)
+
 
 def init():
     config.set_default_curve(SECP256K1)
 
 
-def encryptoTime_dataSize():
+def encryptoTime_dataSize(data_size):
     encrypto = []
     approve = []
     re_encrypto = []
@@ -29,46 +30,29 @@ def encryptoTime_dataSize():
         approve.append(perResult[1])
         re_encrypto.append(perResult[2])
         decrypto.append(perResult[3])
-    draw_map_all(encrypto, approve, re_encrypto, decrypto)
+    draw_map_all(encrypto, approve, re_encrypto, decrypto,data_size)
 
 
-def draw_map_all(encrypto, approve, re_encrypto, decrypto):
-    map1 = {}
-    map1['title'] = u'医生授权时间与病例大小的关系'
-    map1['xlable'] = u'病例大小(字节)'
-    map1['ylable'] = u'病例授权时间'
-    map1['line_lable'] = u'case approve time'
-
-    map2 = {}
-    map2['title'] = u'重加密时间与病例大小的关系'
-    map2['xlable'] = u'病例大小(字节)'
-    map2['ylable'] = u'重加密时间'
-    map2['line_lable'] = u'case re_encrypto time'
-
-    map3 = {}
-    map3['title'] = u'解密时间与病例大小的关系'
-    map3['xlable'] = u'病例大小(字节)'
-    map3['ylable'] = u'解密时间'
-    map3['line_lable'] = u'case decrypto time'
-
-    map4 = {}
-    map4['title'] = u'病例加密时间与病例大小的关系'
-    map4['xlable'] = u'病例大小(字节)'
-    map4['ylable'] = u'病例加密时间'
-    map4['line_lable'] = u'case encrypto time'
-
-    threading.Thread(target=draw_map, args=(
-        map1['title'], map1['xlable'], map1['ylable'], map1['line_lable'], approve)).start()
-    threading.Thread(target=draw_map, args=(
-        map2['title'], map2['xlable'], map2['ylable'], map2['line_lable'], re_encrypto)).start()
+def draw_map_all(encrypto, approve, re_encrypto, decrypto,data_size):
+    x=data_size
+    map1 = draw_parament_serialization(u'医生授权时间与病例大小的关系',u'病例大小(字节)',u'病例授权时间(s)',u'case approve time',[0,0.02])
+    map2 = draw_parament_serialization(u'重加密时间与病例大小的关系',u'病例大小(字节)',u'病例重加密时间(s)',u'case re_encrypto time',[0.01,0.02])
+    map3 = draw_parament_serialization(u'解密时间与病例大小的关系',u'病例大小(字节)',u'病例解密时间(s)',u'case decrypto time',[0.02,0.1])
+    map4 = draw_parament_serialization(u'加密时间与病例大小的关系',u'病例大小(字节)',u'病例加密时间(s)',u'case encrypto time',[0,0.01])
     # threading.Thread(target=draw_map, args=(
-        # map3['title'], map3['xlable'], map3['ylable'], map3['line_lable'], decrypto)).start()
+    #     map1['title'], map1['xlable'], map1['ylable'], map1['line_lable'], map1['y_lim'],x,approve)).start()
     # threading.Thread(target=draw_map, args=(
-        # map4['title'], map4['xlable'], map4['ylable'], map4['line_lable'], encrypto)).start()
+    #     map2['title'], map2['xlable'], map2['ylable'], map2['line_lable'],map2['y_lim'],x,re_encrypto)).start()
+    # threading.Thread(target=draw_map, args=(
+    #     map3['title'], map3['xlable'], map3['ylable'], map3['line_lable'], map3['y_lim'],x,decrypto)).start()
+    threading.Thread(target=draw_map, args=(
+        map4['title'], map4['xlable'], map4['ylable'], map4['line_lable'],map4['y_lim'], x,encrypto)).start()
 
 
-def draw_map(title, xlable, ylable, line_lable, y):
-    x, y = common.serializationDrawData(dataSize, y)
+def draw_map(title, xlable, ylable, line_lable,ylim,x,y):
+    axes = plt.gca()
+    axes.set_ylim(ylim)
+    x, y = common.serializationDrawData(x, y)
     myfont = common_operate.get_font()
     print('{},{}'.format(x, y))
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
@@ -101,7 +85,11 @@ def encrypto_per_file(owner_id):
     print(result)
     return times
 
-
-if __name__ == "__main__":
-    dataSize = common_operate.getDataSize()
-    encryptoTime_dataSize()
+def draw_parament_serialization(title,xlable,ylable,line_lable,y_lim):
+    draw_map = {}
+    draw_map['title'] = title
+    draw_map['xlable'] = xlable
+    draw_map['ylable'] = ylable
+    draw_map['line_lable'] = line_lable
+    draw_map['y_lim'] = y_lim
+    return draw_map
