@@ -9,6 +9,5 @@ class Crypto(object):
         result=hashlib.new('ripemd160')
         result.update(str(hash_digest).encode('utf-8'))
         return result.hexdigest()
-    # def (self, parameter_list):
-    #     pass
+
 

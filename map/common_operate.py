@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/home/yapie/github/re-encryption/')
 from crypto import ecdas
 from config import common
 need_test_file = 10

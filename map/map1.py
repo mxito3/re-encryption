@@ -1,6 +1,7 @@
 #coding:utf-8
 from umbral import pre, keys, signing,config
-import common_operate ,json,time
+from . import common_operate
+import json,time
 from user.doctor import Doctor
 from crypto import ecdas
 from config import common
@@ -45,9 +46,9 @@ def verify(owner_id):
   #第一步,医生加密数据并传输给病人
   #获得病人data
   data=owner.message #读取病例
-  ciphertext,capsule,stage1_finish_time = docter.pretreatment(paint_public_key,data)
+  ciphertext,stage1_finish_time = docter.pretreatment(paint_public_key,data)
   #第二步，owner确认信息是否正确
-  cipher,stage2_finish_time=owner.confirmMessage(ciphertext,capsule)
+  cipher,stage2_finish_time=owner.confirmMessage(ciphertext)
   if not cipher:
     sys.exit(0)        #owner认为信息不对则通不过
   #第三步，医生确认签名

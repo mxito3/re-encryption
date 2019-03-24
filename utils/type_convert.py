@@ -1,5 +1,6 @@
 import ast
-
+from umbral import pre,params,config
+from umbral.curve import SECP256K1
 #这里是一些类型之间的转化
 def bytesTostring(rawBytes:bytes):
     return "".join(map(chr, rawBytes))
@@ -16,4 +17,8 @@ def stringToList(rawString:str):
 def double_process(rawDouble):
     digits=3
     return round(rawDouble,digits)
-    
+
+def bytes_to_capsule(capsule_bytes):
+    parameters=params.UmbralParameters(SECP256K1)
+    capsule=pre.Capsule.from_bytes(capsule_bytes,parameters) 
+    return capsule

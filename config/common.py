@@ -23,8 +23,10 @@ def getDataSize(dataIndex):
     
 
 #级联
-def combine(cipher,verifyKey):
+def combine(cipher,verifyKey,capsule=None):
     ciphertext={}
+    if capsule:
+        ciphertext['capsule']=capsule
     ciphertext['cipher']=cipher
     ciphertext['verify_key'] = verifyKey
     ciphertext['timestamp'] = time.time()

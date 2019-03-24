@@ -14,16 +14,15 @@ class Doctor(object):
         #重加密
         c0, capsule = pre.encrypt(patient_public_key,data)
         #级联
-        ciphertext=common.combine(c0,self.keys.verify_key.to_string())
+        ciphertext=common.combine(c0,self.keys.verify_key.to_string(),capsule=capsule.to_bytes())
         #求hash值
         cipher_hash = hash(ciphertext)
         #对hash值结果获得签名
         sign=common.sign(cipher_hash,self.keys.get_signKey())
         #发送给owner之前先序列化
         cipher=common.serialization(sign,ciphertext)
-        
         finishtime = time.time()
-        return cipher,capsule,finishtime
+        return cipher,finishtime
 
     def treat_owner_response(self,sign,ciphertext):
 

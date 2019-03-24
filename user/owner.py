@@ -26,7 +26,7 @@ class Owner(object):
             return False
 
     #确认病例是否正确
-    def confirmMessage(self,ciphertext,capsule):
+    def confirmMessage(self,ciphertext):
         #获得签名
         sign=ciphertext.get('sign')
         #获得密文
@@ -44,6 +44,8 @@ class Owner(object):
         #查看病例是否是自己的，是否信息正确
         c0=cipher['cipher']
 
+        capsule_bytes = cipher['capsule']
+        capsule =type_convert.bytes_to_capsule(capsule_bytes)
         #用重加密私钥解密之后判断是不是自己的病例
         if not self.checkMessage(c0,capsule):
             print("病例不是owner自己的")

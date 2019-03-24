@@ -1,5 +1,5 @@
 # coding:utf-8
-import common_operate
+from . import common_operate
 import json
 import time
 from crypto.recrypto import RecryptoUtil
