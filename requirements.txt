@@ -28,4 +28,4 @@ requests==2.21.0
 Rx==3.0.0a3
 six==1.12.0
 umbral==0.1.3a1
-urllib3==1.24.1
+urllib3==1.26.5
